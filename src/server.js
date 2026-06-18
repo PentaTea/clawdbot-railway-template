@@ -1337,6 +1337,9 @@ function requireDashboardAuth(req, res, next) {
   if (!SETUP_PASSWORD) return next(); // no password configured → open
   const header = req.headers.authorization || "";
   const [scheme, encoded] = header.split(" ");
+  if (scheme === "Bearer" && OPENCLAW_GATEWAY_TOKEN && encoded === OPENCLAW_GATEWAY_TOKEN) {
+    return next();
+  }
   if (scheme !== "Basic" || !encoded) {
     res.set("WWW-Authenticate", 'Basic realm="OpenClaw Dashboard"');
     return res.status(401).send("Auth required");
